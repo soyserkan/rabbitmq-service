@@ -5,21 +5,18 @@ export class Subscriber {
     constructor(channel: amqp.Channel) {
         this.channel = channel;
     }
-    public async listen(queueName: string) {
-        var data = null;
-        try {
-            var self = this;
-            await this.channel.assertQueue(queueName, { durable: true });
-            await this.channel.consume(queueName, function (message) {
-                if (message) {
-                    data = JSON.parse(message.content.toString());
-                    self.channel.ack(message);
+    public async listen(queueName: string, optionsCallback: any) {
+        var self = this;
+        self.channel.assertQueue(queueName, { durable: true });
+        return self.channel.consume(queueName, (msg) => {
+            if (msg !== null) {
+                try {
+                    optionsCallback(JSON.parse(msg.content.toString()));
+                } catch (ex) {
+                    optionsCallback(ex)
                 }
-            });
-        }
-        catch (error) {
-            data = error
-        }
-        return data;
-    }
+                this.channel.ack(msg);
+            }
+        });
+    };
 }

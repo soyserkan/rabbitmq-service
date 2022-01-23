@@ -22,8 +22,8 @@ class Subscriber {
                 yield this.channel.assertQueue(queueName, { durable: true });
                 yield this.channel.consume(queueName, function (message) {
                     if (message) {
-                        self.channel.ack(message);
                         data = JSON.parse(message.content.toString());
+                        self.channel.ack(message);
                     }
                 });
             }
