@@ -14,24 +14,23 @@ class Subscriber {
     constructor(channel) {
         this.channel = channel;
     }
-    listen(queueName) {
+    listen(queueName, optionsCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            var data = null;
-            try {
-                var self = this;
-                yield this.channel.assertQueue(queueName, { durable: true });
-                yield this.channel.consume(queueName, function (message) {
-                    if (message) {
-                        data = JSON.parse(message.content.toString());
-                        self.channel.ack(message);
+            var self = this;
+            self.channel.assertQueue(queueName, { durable: true });
+            return self.channel.consume(queueName, (msg) => {
+                if (msg !== null) {
+                    try {
+                        optionsCallback(JSON.parse(msg.content.toString()));
                     }
-                });
-            }
-            catch (error) {
-                data = error;
-            }
-            return data;
+                    catch (ex) {
+                        optionsCallback(ex);
+                    }
+                    this.channel.ack(msg);
+                }
+            });
         });
     }
+    ;
 }
 exports.Subscriber = Subscriber;
