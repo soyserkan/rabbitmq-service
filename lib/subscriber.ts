@@ -15,7 +15,7 @@ export class Subscriber {
                         self.channel.ack(data);
                         resolve(JSON.parse(data.content.toString()));
                     }
-                }, { noAck: false })
+                })
             } catch (error) {
                 reject(error);
             }
