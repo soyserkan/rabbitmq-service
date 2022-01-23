@@ -6,19 +6,20 @@ export class Subscriber {
         this.channel = channel;
     }
     public async listen(queueName: string) {
+        var data = null;
         try {
             var self = this;
             await this.channel.assertQueue(queueName, { durable: true });
             await this.channel.consume(queueName, function (message) {
                 if (message) {
                     self.channel.ack(message);
-                    return message.content.toString();
+                    data = JSON.parse(message.content.toString())
                 }
             });
-            return null;
         }
         catch (error) {
-            return error
+            data = error
         }
+        return data;
     }
 }
