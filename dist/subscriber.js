@@ -16,20 +16,21 @@ class Subscriber {
     }
     listen(queueName) {
         return __awaiter(this, void 0, void 0, function* () {
+            var data = null;
             try {
                 var self = this;
                 yield this.channel.assertQueue(queueName, { durable: true });
                 yield this.channel.consume(queueName, function (message) {
                     if (message) {
                         self.channel.ack(message);
-                        return message.content.toString();
+                        data = JSON.parse(message.content.toString());
                     }
                 });
-                return null;
             }
             catch (error) {
-                return error;
+                data = error;
             }
+            return data;
         });
     }
 }

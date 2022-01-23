@@ -12,8 +12,8 @@ export class Subscriber {
             await this.channel.assertQueue(queueName, { durable: true });
             await this.channel.consume(queueName, function (message) {
                 if (message) {
+                    data = JSON.parse(message.content.toString());
                     self.channel.ack(message);
-                    data = JSON.parse(message.content.toString())
                 }
             });
         }
