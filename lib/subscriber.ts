@@ -6,19 +6,19 @@ export class Subscriber {
         this.channel = channel;
     }
     public async listen(queueName: string) {
-        return new Promise((resolve, reject) => {
-            try {
-                var self = this;
-                this.channel.assertQueue(queueName, { durable: true });
-                this.channel.consume(queueName, function (data) {
-                    if (data) {
-                        self.channel.ack(data);
-                        resolve(JSON.parse(data.content.toString()));
-                    }
-                })
-            } catch (error) {
-                reject(error);
-            }
-        })
+        try {
+            var self = this;
+            await this.channel.assertQueue(queueName, { durable: true });
+            await this.channel.consume(queueName, function (message) {
+                if (message) {
+                    self.channel.ack(message);
+                    return message.content.toString();
+                }
+            });
+            return null;
+        }
+        catch (error) {
+            return error
+        }
     }
 }
