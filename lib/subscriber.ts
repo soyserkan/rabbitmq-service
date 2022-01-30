@@ -7,10 +7,10 @@ export class Subscriber {
     }
     public async listen(queueName: string, optionsCallback: any) {
         var self = this;
-        await self.channel.assertExchange(queueName, 'fanout', { durable: true });
-        await self.channel.assertQueue(queueName, { exclusive: false });
-        await self.channel.bindQueue(queueName, queueName, '')
-        return self.channel.consume(queueName, (msg) => {
+        await self.channel.assertExchange(queueName, 'fanout', { durable: false });
+        const q: any = await self.channel.assertQueue("", { exclusive: false });
+        await self.channel.bindQueue(q.queue, queueName, '')
+        return self.channel.consume(q.queue, (msg) => {
             if (msg !== null) {
                 try {
                     optionsCallback(msg);
@@ -18,7 +18,7 @@ export class Subscriber {
                     optionsCallback(ex)
                 }
             }
-        }, { noAck: true });
+        });
 
 
 

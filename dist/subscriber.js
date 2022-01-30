@@ -17,10 +17,9 @@ class Subscriber {
     listen(queueName, optionsCallback) {
         return __awaiter(this, void 0, void 0, function* () {
             var self = this;
-            yield self.channel.assertExchange(queueName, 'fanout', { durable: false });
-            yield self.channel.assertQueue('', { exclusive: true });
-            self.channel.bindQueue(queueName, queueName, '');
-            console.log(" [*] Waiting for messages in %s. To exit press CTRL+C");
+            yield self.channel.assertExchange(queueName, 'fanout', { durable: true });
+            yield self.channel.assertQueue(queueName, { exclusive: false });
+            yield self.channel.bindQueue(queueName, queueName, '');
             return self.channel.consume(queueName, (msg) => {
                 if (msg !== null) {
                     try {
