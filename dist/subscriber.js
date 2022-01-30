@@ -17,16 +17,24 @@ class Subscriber {
     listen(queueName, optionsCallback) {
         return __awaiter(this, void 0, void 0, function* () {
             var self = this;
-            self.channel.assertQueue(queueName, { durable: true });
-            return self.channel.consume(queueName, (msg) => {
-                if (msg !== null) {
-                    try {
-                        optionsCallback(msg);
-                    }
-                    catch (ex) {
-                        optionsCallback(ex);
-                    }
+            self.channel.assertExchange(queueName, 'fanuot', { durable: true });
+            self.channel.assertQueue(queueName, { durable: true }, function (err, q) {
+                if (err) {
+                    console.log(err);
+                    return;
                 }
+                console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
+                self.channel.bindQueue(q.queue, queueName, '');
+                return self.channel.consume(q.queue, (msg) => {
+                    if (msg !== null) {
+                        try {
+                            optionsCallback(msg);
+                        }
+                        catch (ex) {
+                            optionsCallback(ex);
+                        }
+                    }
+                });
             });
         });
     }

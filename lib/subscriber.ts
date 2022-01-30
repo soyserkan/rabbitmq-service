@@ -7,7 +7,7 @@ export class Subscriber {
     }
     public async listen(queueName: string, optionsCallback: any) {
         var self = this;
-        self.channel.assertExchange(queueName, 'fanuot', { durable: true });
+        self.channel.assertExchange(queueName, 'fanout', { durable: true });
         self.channel.assertQueue(queueName, { durable: true }, function (err, q) {
             if (err) {
                 console.log(err);
