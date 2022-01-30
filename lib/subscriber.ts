@@ -7,10 +7,9 @@ export class Subscriber {
     }
     public async listen(queueName: string, optionsCallback: any) {
         var self = this;
-        await self.channel.assertExchange(queueName, 'fanout', { durable: false });
-        await self.channel.assertQueue('', { exclusive: true })
-        self.channel.bindQueue(queueName, queueName, '');
-        console.log(" [*] Waiting for messages in %s. To exit press CTRL+C");
+        await self.channel.assertExchange(queueName, 'fanout', { durable: true });
+        await self.channel.assertQueue(queueName, { exclusive: false });
+        await self.channel.bindQueue(queueName, queueName, '')
         return self.channel.consume(queueName, (msg) => {
             if (msg !== null) {
                 try {
