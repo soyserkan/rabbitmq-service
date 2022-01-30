@@ -21,12 +21,11 @@ class Subscriber {
             return self.channel.consume(queueName, (msg) => {
                 if (msg !== null) {
                     try {
-                        optionsCallback(JSON.parse(msg.content.toString()));
+                        optionsCallback(msg);
                     }
                     catch (ex) {
                         optionsCallback(ex);
                     }
-                    this.channel.ack(msg);
                 }
             });
         });
