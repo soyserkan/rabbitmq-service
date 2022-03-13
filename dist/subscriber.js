@@ -17,9 +17,19 @@ class Subscriber {
     listen(queueName, optionsCallback) {
         return __awaiter(this, void 0, void 0, function* () {
             var self = this;
-            yield self.channel.assertExchange(queueName, 'fanout', { durable: true });
-            yield self.channel.assertQueue(queueName, { exclusive: false });
-            yield self.channel.bindQueue(queueName, queueName, '');
+            // await self.channel.assertExchange(queueName, 'fanout', { durable: false });
+            // const q: any = await self.channel.assertQueue("", { exclusive: false });
+            // await self.channel.bindQueue(q.queue, queueName, '')
+            // return self.channel.consume(q.queue, (msg) => {
+            //     if (msg !== null) {
+            //         try {
+            //             optionsCallback(msg);
+            //         } catch (ex) {
+            //             optionsCallback(ex)
+            //         }
+            //     }
+            // });
+            self.channel.assertQueue(queueName, { durable: true });
             return self.channel.consume(queueName, (msg) => {
                 if (msg !== null) {
                     try {
@@ -29,17 +39,7 @@ class Subscriber {
                         optionsCallback(ex);
                     }
                 }
-            }, { noAck: true });
-            // self.channel.assertQueue(queueName, { durable: true });
-            // return self.channel.consume(queueName, (msg) => {
-            //     if (msg !== null) {
-            //         try {
-            //             optionsCallback(msg);
-            //         } catch (ex) {
-            //             optionsCallback(ex)
-            //         }
-            //     }
-            // });
+            });
         });
     }
     ;
