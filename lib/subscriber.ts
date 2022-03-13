@@ -23,7 +23,7 @@ export class Subscriber {
 
 
 
-        await self.channel.assertExchange(queueName, 'fanout', { durable: false });
+        await self.channel.assertExchange(queueName, 'fanout', { durable: true });
         //self.channel.assertQueue(queueName, { durable: true });
         return self.channel.consume(queueName, (msg) => {
             if (msg !== null) {
