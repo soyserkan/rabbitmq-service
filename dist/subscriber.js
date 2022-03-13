@@ -29,7 +29,7 @@ class Subscriber {
             //         }
             //     }
             // });
-            yield self.channel.assertExchange(queueName, 'fanout', { durable: false });
+            yield self.channel.assertExchange(queueName, 'fanout', { durable: true });
             //self.channel.assertQueue(queueName, { durable: true });
             return self.channel.consume(queueName, (msg) => {
                 if (msg !== null) {
