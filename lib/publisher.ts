@@ -10,7 +10,7 @@ export class Publisher {
         console.log("new queue published => " + queueName);
         //return this.channel.sendToQueue(queueName, Buffer.from(JSON.stringify(data)));
 
-        await this.channel.assertExchange(queueName, 'fanout', { durable: false });
+        await this.channel.assertExchange(queueName, 'fanout', { durable: true });
         return this.channel.publish(queueName, '', Buffer.from(JSON.stringify(data)))
     }
 }
