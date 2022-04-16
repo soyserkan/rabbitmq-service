@@ -5,12 +5,18 @@ export class Publisher {
     constructor(channel: amqp.Channel) {
         this.channel = channel;
     }
-    async publish(queueName: string, data: any) {
-        //await this.channel.assertQueue(queueName, { durable: true })
-        console.log("new queue published => " + queueName);
-        //return this.channel.sendToQueue(queueName, Buffer.from(JSON.stringify(data)));
+    publish(queueName: string, data: any) {
+        return new Promise((resolve, reject) => {
+            try {
+                //await this.channel.assertQueue(queueName, { durable: true })
+                console.log("new queue published => " + queueName);
+                //return this.channel.sendToQueue(queueName, Buffer.from(JSON.stringify(data)));
 
-        await this.channel.assertExchange(queueName, 'fanout', { durable: true });
-        return this.channel.publish(queueName, '', Buffer.from(JSON.stringify(data)))
+                this.channel.assertExchange(queueName, 'fanout', { durable: true });
+                resolve(this.channel.publish(queueName, '', Buffer.from(JSON.stringify(data))));
+            } catch (error) {
+                reject(error);
+            }
+        })
     }
 }
