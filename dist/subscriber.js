@@ -17,10 +17,23 @@ class Subscriber {
     listen(queueName, optionsCallback) {
         return __awaiter(this, void 0, void 0, function* () {
             var self = this;
-            // await self.channel.assertExchange(queueName, 'fanout', { durable: false });
-            // const q: any = await self.channel.assertQueue("", { exclusive: false });
-            // await self.channel.bindQueue(q.queue, queueName, '')
-            // return self.channel.consume(q.queue, (msg) => {
+            yield self.channel.assertExchange(queueName, 'fanout', { durable: true });
+            yield self.channel.assertQueue("", { exclusive: false }, function (err, q) {
+                console.log('Waiting for messages in %s.', q.queue);
+                self.channel.bindQueue(q.queue, queueName, '');
+                return self.channel.consume(q.queue, function (msg) {
+                    if (msg !== null) {
+                        try {
+                            optionsCallback(msg);
+                        }
+                        catch (ex) {
+                            optionsCallback(ex);
+                        }
+                    }
+                });
+            });
+            // self.channel.assertQueue(queueName, { durable: true });
+            // return self.channel.consume(queueName, (msg) => {
             //     if (msg !== null) {
             //         try {
             //             optionsCallback(msg);
@@ -29,20 +42,7 @@ class Subscriber {
             //         }
             //     }
             // });
-            yield self.channel.assertExchange(queueName, 'fanout', { durable: true });
-            //self.channel.assertQueue(queueName, { durable: true });
-            return self.channel.consume(queueName, (msg) => {
-                if (msg !== null) {
-                    try {
-                        optionsCallback(msg);
-                    }
-                    catch (ex) {
-                        optionsCallback(ex);
-                    }
-                }
-            });
         });
     }
-    ;
 }
 exports.Subscriber = Subscriber;
