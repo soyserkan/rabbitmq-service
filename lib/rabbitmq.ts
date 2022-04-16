@@ -26,6 +26,16 @@ class RabbitMQ {
                         self._channel = conn_channel;
                         resolve(conn_channel);
                     });
+                    connection.on("error", function (err) {
+                        console.log("ERROR", err);
+                        if (err.message !== "Connection closing") {
+                            console.error("[AMQP] conn error", err.message);
+                        }
+                    });
+                    connection.on("close", function () {
+                        console.error("[AMQP] connection closed");
+                    });
+
                 }
             });
         })

@@ -5,32 +5,23 @@ export class Subscriber {
     constructor(channel: amqp.Channel) {
         this.channel = channel;
     }
-    public async listen(queueName: string, optionsCallback: any) {
+    listen(queueName: string) {
         var self = this;
-        await self.channel.assertExchange(queueName, 'fanout', { durable: true });
-        await self.channel.assertQueue("", { exclusive: false }, function (err, q) {
-            console.log('Waiting for messages in %s.', q.queue);
-            self.channel.bindQueue(q.queue, queueName, '');
-            return self.channel.consume(q.queue, function (msg) {
-                if (msg !== null) {
-                    try {
-                        optionsCallback(msg);
-                    } catch (ex) {
-                        optionsCallback(ex)
+        return new Promise((resolve, reject) => {
+            self.channel.assertExchange(queueName, 'fanout', { durable: true });
+            self.channel.assertQueue("", { exclusive: false }, function (err, q) {
+                console.log('Waiting for messages in %s.', q.queue);
+                self.channel.bindQueue(q.queue, queueName, '');
+                self.channel.consume(q.queue, function (msg) {
+                    if (msg !== null) {
+                        try {
+                            resolve(msg);
+                        } catch (ex) {
+                            reject(ex)
+                        }
                     }
-                }
+                });
             });
-        });
-
-        // self.channel.assertQueue(queueName, { durable: true });
-        // return self.channel.consume(queueName, (msg) => {
-        //     if (msg !== null) {
-        //         try {
-        //             optionsCallback(msg);
-        //         } catch (ex) {
-        //             optionsCallback(ex)
-        //         }
-        //     }
-        // });
+        })
     }
 }
